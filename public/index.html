@@ -13,13 +13,14 @@
 .topbar{display:flex;justify-content:space-between;align-items:center;background:#e7f0dd;border:3px solid #587a79;border-radius:18px;padding:10px 14px;box-shadow:0 5px 0 #78969a;margin-bottom:14px}.score strong{font-size:25px}.rank{font-weight:900;color:#537d5d;font-size:18px}.panel{background:rgba(255,248,223,.75);border:3px solid #68888a;border-radius:25px;padding:22px;box-shadow:0 6px 0 #829da0}.home .panel{text-align:center;margin-top:25px}.home h2{font-size:27px;margin:0 0 10px}.home p{line-height:1.7;margin:10px 0 24px}.button{border:0;border-bottom:5px solid #b58f2e;border-radius:18px;padding:14px 24px;background:var(--yellow);color:#594b26;font:900 21px inherit;cursor:pointer;box-shadow:0 2px 0 #fff8c1;transition:.12s}.button:active{transform:translateY(3px);border-bottom-width:2px}.small-btn{font-size:15px;padding:9px 12px;border-radius:12px;border-bottom-width:3px}.home-footer{margin-top:auto;display:flex;justify-content:center;gap:10px;padding-top:20px}.secondary{background:#e6f0e4;border-color:#698889;color:var(--ink);border-bottom-color:#718e8a}
 .fuse{height:19px;background:#dce9d6;border:3px solid #587a79;border-radius:99px;overflow:hidden;margin-bottom:7px;position:relative;flex:none}.fuse i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ef6f54,#ffd558);transform-origin:left}.fuse:after{content:"✦";position:absolute;right:2px;top:-8px;font-size:23px;color:#fff0a2}.game-score{text-align:center;font-weight:900;margin:-4px 0 7px;flex:none}.timer-label{text-align:center;font-size:14px;font-weight:800;margin-bottom:7px;flex:none}.board{--cell-size:min(calc((100vw - 54px) / 10),calc((100dvh - 290px) / 16),48px);display:grid;grid-template-columns:repeat(10,var(--cell-size));grid-template-rows:repeat(16,var(--cell-size));gap:3px;width:max-content;align-self:center;background:#147a58;padding:6px;border:4px solid #8b6223;border-radius:18px;box-shadow:0 5px 0 #6d8e88;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;position:relative}.cell{width:var(--cell-size);height:var(--cell-size);background:#f9f8e8;border:1px solid #dedcc9;border-radius:3px;display:grid;place-items:center;font-size:clamp(14px,calc(var(--cell-size) * .57),24px);font-weight:900;color:#182527;cursor:pointer;transition:.08s;box-shadow:1px 2px 0 #bdc8bb}.cell.selected{background:#f9f8e8;border-color:#dedcc9;transform:none;box-shadow:1px 2px 0 #bdc8bb}.cell.empty{background:transparent;border-color:transparent;box-shadow:none;cursor:default}.selection-outline{position:absolute;border:1px solid #ffe15a;border-radius:3px;background:transparent;pointer-events:none;z-index:2;transition:left .04s,top .04s,width .04s,height .04s}.ten-effect{position:absolute;display:grid;place-items:center;width:clamp(32px,calc(var(--cell-size) * 1.25),52px);height:clamp(32px,calc(var(--cell-size) * 1.25),52px);border:2px solid #c3962b;border-radius:5px;background:#ffe66a;color:#243033;font-size:clamp(18px,calc(var(--cell-size) * .7),30px);font-weight:900;box-shadow:2px 3px 0 #96702c;pointer-events:none;z-index:4;animation:ten-pop .8s ease-out forwards}@keyframes ten-pop{0%{opacity:0;transform:translate(-50%,-20%) scale(.45) rotate(-8deg)}25%{opacity:1;transform:translate(-50%,-55%) scale(1.1) rotate(5deg)}100%{opacity:0;transform:translate(-50%,-165%) scale(.88) rotate(-4deg)}}.toolbox{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:10px;flex:none}.tool{border:2px solid #587a79;border-radius:12px;padding:7px 5px;background:#e8f0df;color:#20333a;font:800 14px inherit;cursor:pointer;box-shadow:0 3px 0 #78969a}.tool:active{transform:translateY(2px);box-shadow:0 1px 0 #78969a}.tool.on{background:#ffd85a}.hint{animation:pulse .55s ease-in-out 3}@keyframes pulse{50%{background:#ffdd56;transform:scale(1.1)}}
 @media (max-height:720px){.app{padding-top:8px;padding-bottom:8px}.topbar{padding:7px 12px;margin-bottom:8px}.score strong{font-size:21px}.fuse{height:16px}.toolbox{margin-top:7px}.tool{padding:5px}.game-score,.timer-label{margin-bottom:4px}}
-.modal-wrap{position:absolute;inset:0;background:#213c3d88;display:grid;place-items:center;padding:22px;z-index:5}.modal{max-width:420px;background:var(--cream);border:4px solid #587a79;border-radius:25px;padding:25px;box-shadow:0 8px 0 #496c70;text-align:center}.modal h2{margin:0 0 12px}.modal p{line-height:1.75;text-align:left}.result{text-align:center;margin:auto 0}.result .duck{font-size:75px;margin:10px}.result h1{font-size:34px;margin:8px}.result .big{font-size:42px;font-weight:900;color:#bd733d}.actions{display:flex;justify-content:center;gap:10px;margin-top:25px}.hidden{display:none!important}
+.effects-layer{position:absolute;inset:0;z-index:4;pointer-events:none}.modal-wrap{position:absolute;inset:0;background:#213c3d88;display:grid;place-items:center;padding:22px;z-index:5}.modal{max-width:420px;background:var(--cream);border:4px solid #587a79;border-radius:25px;padding:25px;box-shadow:0 8px 0 #496c70;text-align:center}.modal h2{margin:0 0 12px}.modal p{line-height:1.75;text-align:left}.result{text-align:center;margin:auto 0}.result .duck{font-size:75px;margin:10px}.result h1{font-size:34px;margin:8px}.result .big{font-size:42px;font-weight:900;color:#bd733d}.actions{display:flex;justify-content:center;gap:10px;margin-top:25px}.hidden{display:none!important}
 </style></head>
 <body><main class="app">
 <section id="loading" class="screen"><div></div></section>
 <section id="home" class="screen home active"><div class="topbar"><div class="score">当前智力<br><strong id="totalScore">0</strong></div><div class="rank" id="homeRank">托儿所</div></div><div class="panel"><h2>开局托儿所</h2><p>框选区域内的数字，让总和等于 <b>10</b>。选得越多，分数越高！</p><button class="button" id="defaultBtn">默认模式</button><p style="margin:16px 0 0"><button class="button secondary small-btn" id="countdownBtn">倒计时模式</button> <button class="button secondary small-btn" id="stopwatchBtn">计时模式</button></p><p style="margin:12px 0 0"><button class="button secondary small-btn" id="loadBtn">读取进度</button></p></div></section>
 <section id="game" class="screen"><div class="topbar"><div class="score">当前智力<br><strong id="roundScore">0</strong></div><div class="rank" id="gameRank">托儿所</div></div><div class="fuse"><i id="fuseFill"></i></div><div class="timer-label" id="timerLabel">自由模式</div><div class="game-score">拖动框选区域 · 区域总和：<span id="selectionSum">0</span></div><div class="board" id="board"></div><div class="toolbox"><button class="tool" id="shuffleBtn">🔀 洗牌</button><button class="tool" id="pauseBtn">⏸ 暂停计时</button><button class="tool" id="saveBtn">💾 保存进度</button><button class="tool" id="restartBtn">↻ 重新开始</button><button class="tool" id="endBtn">✓ 结束本局</button><button class="tool" id="quitBtn">⌂ 返回主页</button></div></section>
 <section id="result" class="screen result"><div class="duck">🐥</div><h1 id="resultTitle">本局结束！</h1><p>本局智力</p><div class="big" id="finalRound">0</div><p id="finalDuration">本局用时：0 秒</p><p>总智力：<b id="finalTotal">0</b><br>学历称号：<b id="finalRank">托儿所</b></p><p id="finalRecordStatus">本局数据正在保存…</p><div class="actions"><button class="button" id="againBtn">再来一局</button><button class="button secondary" id="homeBtn">返回首页</button></div></section>
+<div class="effects-layer" id="effectsLayer"></div>
 </main><script>
 const $ = s => document.querySelector(s);
 const screens = [...document.querySelectorAll('.screen')];
@@ -27,7 +28,7 @@ const ROWS = 16, COLS = 10, ROUND_SECONDS = 60;
 const MODE_LABELS = { default: '默认模式', countdown: '倒计时模式', stopwatch: '计时模式' };
 const clientId = localStorage.getItem('sum-ten-client-id') || crypto.randomUUID();
 localStorage.setItem('sum-ten-client-id', clientId);
-let grid = [], selected = [], selectionStart = null, selectionEnd = null, effects = [], drag = false, round = 0, total = 0, time = ROUND_SECONDS, elapsed = 0, timer = null, mode = 'default', paused = false, gameEnded = false;
+let grid = [], selected = [], selectionStart = null, selectionEnd = null, drag = false, round = 0, total = 0, time = ROUND_SECONDS, elapsed = 0, timer = null, mode = 'default', paused = false, gameEnded = false;
 
 const rank = score => score < 100 ? '托儿所' : score < 300 ? '小学' : score < 600 ? '中学' : '大学';
 function show(id) { screens.forEach(screen => screen.classList.toggle('active', screen.id === id)); }
@@ -72,15 +73,21 @@ function render() {
     outline.style.height = `${rowCount * cellSize + (rowCount - 1) * gap}px`;
     board.appendChild(outline);
   }
-  effects.forEach(effect => {
-    const cellSize = board.querySelector('.cell').offsetWidth;
-    const badge = document.createElement('div');
-    badge.className = 'ten-effect';
-    badge.textContent = '10';
-    badge.style.left = `${10 + (effect.col + .5) * (cellSize + 3) - 1.5}px`;
-    badge.style.top = `${10 + (effect.row + .5) * (cellSize + 3) - 1.5}px`;
-    board.appendChild(badge);
-  });
+}
+
+function clearEffects() { $('#effectsLayer').replaceChildren(); }
+function showTenEffect(effect) {
+  const board = $('#board');
+  const appRect = document.querySelector('.app').getBoundingClientRect();
+  const boardRect = board.getBoundingClientRect();
+  const cellSize = board.querySelector('.cell').offsetWidth;
+  const badge = document.createElement('div');
+  badge.className = 'ten-effect';
+  badge.textContent = '10';
+  badge.style.left = `${boardRect.left - appRect.left + 10 + (effect.col + .5) * (cellSize + 3) - 1.5}px`;
+  badge.style.top = `${boardRect.top - appRect.top + 10 + (effect.row + .5) * (cellSize + 3) - 1.5}px`;
+  $('#effectsLayer').appendChild(badge);
+  setTimeout(() => badge.remove(), 800);
 }
 
 function selectArea(endRow, endCol) {
@@ -107,10 +114,10 @@ function finishSelection() {
   selectionStart = null;
   selectionEnd = null;
   const sum = selectionSum();
+  let effect = null;
   if (selected.length >= 2 && sum === 10) {
     const removed = selected.slice();
-    const effect = {
-      id: Date.now(),
+    effect = {
       row: removed.reduce((total, [row]) => total + row, 0) / removed.length,
       col: removed.reduce((total, [, col]) => total + col, 0) / removed.length,
     };
@@ -120,15 +127,11 @@ function finishSelection() {
     $('#roundScore').textContent = round;
     $('#totalScore').textContent = total;
     $('#gameRank').textContent = rank(total);
-    effects.push(effect);
-    setTimeout(() => {
-      effects = effects.filter(item => item.id !== effect.id);
-      render();
-    }, 800);
   }
   selected = [];
   updateSum();
   render();
+  if (effect) showTenEffect(effect);
 }
 
 function start(nextMode = 'default') {
@@ -144,7 +147,7 @@ function start(nextMode = 'default') {
   selected = [];
   selectionStart = null;
   selectionEnd = null;
-  effects = [];
+  clearEffects();
   newGrid();
   $('#roundScore').textContent = round;
   $('#gameRank').textContent = rank(total);
@@ -249,7 +252,7 @@ $('#loadBtn').addEventListener('click', () => {
     ({ grid, round, total, time, elapsed = 0, mode = 'default' } = data);
     paused = false;
     selected = [];
-    effects = [];
+    clearEffects();
     $('#roundScore').textContent = round;
     $('#totalScore').textContent = total;
     $('#gameRank').textContent = rank(total);
@@ -266,7 +269,7 @@ $('#quitBtn').addEventListener('click', () => {
   selected = [];
   selectionStart = null;
   selectionEnd = null;
-  effects = [];
+  clearEffects();
   show('home');
 });
 window.addEventListener('online', () => { void flushRecords(); });
