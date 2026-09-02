@@ -16,7 +16,7 @@
 <body><main class="app">
 <section id="loading" class="screen"><div></div></section>
 <section id="home" class="screen home active"><div class="topbar"><div class="score">当前智力<br><strong id="totalScore">0</strong></div><div class="rank" id="homeRank">托儿所</div></div><div class="panel"><h2>开局托儿所</h2><p>框选相邻数字，让它们的总和等于 <b>10</b>。选得越多，分数越高！</p><button class="button" id="startBtn" onclick="start(false)">限时挑战</button><p style="margin:16px 0 0"><button class="button secondary small-btn" id="infiniteBtn">无限时间模式</button> <button class="button secondary small-btn" id="loadBtn">读取进度</button></p></div></section>
-<section id="game" class="screen"><div class="topbar"><div class="score">当前智力<br><strong id="roundScore">0</strong></div><div class="rank" id="gameRank">托儿所</div></div><div class="fuse"><i id="fuseFill"></i></div><div class="timer-label" id="timerLabel">剩余 60 秒</div><div class="game-score">拖动框选区域 · 区域总和：<span id="selectionSum">0</span></div><div class="board" id="board"></div><div class="toolbox"><button class="tool" id="shuffleBtn">🔀 洗牌</button><button class="tool" id="pauseBtn">⏸ 暂停计时</button><button class="tool" id="saveBtn">💾 保存进度</button><button class="tool" id="restartBtn">↻ 重新开始</button></div></section>
+<section id="game" class="screen"><div class="topbar"><div class="score">当前智力<br><strong id="roundScore">0</strong></div><div class="rank" id="gameRank">托儿所</div></div><div class="fuse"><i id="fuseFill"></i></div><div class="timer-label" id="timerLabel">剩余 60 秒</div><div class="game-score">拖动框选区域 · 区域总和：<span id="selectionSum">0</span></div><div class="board" id="board"></div><div class="toolbox"><button class="tool" id="shuffleBtn">🔀 洗牌</button><button class="tool" id="pauseBtn">⏸ 暂停计时</button><button class="tool" id="saveBtn">💾 保存进度</button><button class="tool" id="restartBtn">↻ 重新开始</button><button class="tool" id="quitBtn">⌂ 返回主页</button></div></section>
 <section id="result" class="screen result"><div class="duck">🐥</div><h1>时间到！</h1><p>本局智力</p><div class="big" id="finalRound">0</div><p>总智力：<b id="finalTotal">0</b><br>学历称号：<b id="finalRank">托儿所</b></p><div class="actions"><button class="button" id="againBtn">再来一局</button><button class="button secondary" id="homeBtn">返回首页</button></div></section>
 </main><script>
 const $ = s => document.querySelector(s);
@@ -176,5 +176,12 @@ $('#loadBtn').addEventListener('click', () => {
   } catch { alert('进度数据无法读取。'); }
 });
 $('#restartBtn').addEventListener('click', () => start(infinite));
+$('#quitBtn').addEventListener('click', () => {
+  clearInterval(timer);
+  drag = false;
+  selected = [];
+  selectionStart = null;
+  show('home');
+});
 $('#homeRank').textContent = rank(total);
 </script></body></html>
