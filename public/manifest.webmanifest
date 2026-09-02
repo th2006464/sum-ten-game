@@ -1,0 +1,8 @@
+{
+  "name": "开局托儿所：凑十游戏",
+  "short_name": "凑十游戏",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#9fb8c4",
+  "theme_color": "#9fb8c4"
+}

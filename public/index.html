@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#9fb8c4" />
+<link rel="manifest" href="/manifest.webmanifest" />
 <title>开局托儿所</title>
 <style>
 :root{--bg:#a9bfca;--ink:#20333a;--green:#78ad82;--green2:#a9d3a6;--yellow:#ffd85a;--cream:#fff8df;--red:#ef735e}
@@ -15,14 +17,17 @@
 </style></head>
 <body><main class="app">
 <section id="loading" class="screen"><div></div></section>
-<section id="home" class="screen home active"><div class="topbar"><div class="score">当前智力<br><strong id="totalScore">0</strong></div><div class="rank" id="homeRank">托儿所</div></div><div class="panel"><h2>开局托儿所</h2><p>框选相邻数字，让它们的总和等于 <b>10</b>。选得越多，分数越高！</p><button class="button" id="startBtn" onclick="start(false)">限时挑战</button><p style="margin:16px 0 0"><button class="button secondary small-btn" id="infiniteBtn">无限时间模式</button> <button class="button secondary small-btn" id="loadBtn">读取进度</button></p></div></section>
-<section id="game" class="screen"><div class="topbar"><div class="score">当前智力<br><strong id="roundScore">0</strong></div><div class="rank" id="gameRank">托儿所</div></div><div class="fuse"><i id="fuseFill"></i></div><div class="timer-label" id="timerLabel">剩余 60 秒</div><div class="game-score">拖动框选区域 · 区域总和：<span id="selectionSum">0</span></div><div class="board" id="board"></div><div class="toolbox"><button class="tool" id="shuffleBtn">🔀 洗牌</button><button class="tool" id="pauseBtn">⏸ 暂停计时</button><button class="tool" id="saveBtn">💾 保存进度</button><button class="tool" id="restartBtn">↻ 重新开始</button><button class="tool" id="quitBtn">⌂ 返回主页</button></div></section>
-<section id="result" class="screen result"><div class="duck">🐥</div><h1>时间到！</h1><p>本局智力</p><div class="big" id="finalRound">0</div><p>总智力：<b id="finalTotal">0</b><br>学历称号：<b id="finalRank">托儿所</b></p><div class="actions"><button class="button" id="againBtn">再来一局</button><button class="button secondary" id="homeBtn">返回首页</button></div></section>
+<section id="home" class="screen home active"><div class="topbar"><div class="score">当前智力<br><strong id="totalScore">0</strong></div><div class="rank" id="homeRank">托儿所</div></div><div class="panel"><h2>开局托儿所</h2><p>框选区域内的数字，让总和等于 <b>10</b>。选得越多，分数越高！</p><button class="button" id="defaultBtn">默认模式</button><p style="margin:16px 0 0"><button class="button secondary small-btn" id="countdownBtn">倒计时模式</button> <button class="button secondary small-btn" id="stopwatchBtn">计时模式</button></p><p style="margin:12px 0 0"><button class="button secondary small-btn" id="loadBtn">读取进度</button></p></div></section>
+<section id="game" class="screen"><div class="topbar"><div class="score">当前智力<br><strong id="roundScore">0</strong></div><div class="rank" id="gameRank">托儿所</div></div><div class="fuse"><i id="fuseFill"></i></div><div class="timer-label" id="timerLabel">自由模式</div><div class="game-score">拖动框选区域 · 区域总和：<span id="selectionSum">0</span></div><div class="board" id="board"></div><div class="toolbox"><button class="tool" id="shuffleBtn">🔀 洗牌</button><button class="tool" id="pauseBtn">⏸ 暂停计时</button><button class="tool" id="saveBtn">💾 保存进度</button><button class="tool" id="restartBtn">↻ 重新开始</button><button class="tool" id="endBtn">✓ 结束本局</button><button class="tool" id="quitBtn">⌂ 返回主页</button></div></section>
+<section id="result" class="screen result"><div class="duck">🐥</div><h1 id="resultTitle">本局结束！</h1><p>本局智力</p><div class="big" id="finalRound">0</div><p id="finalDuration">本局用时：0 秒</p><p>总智力：<b id="finalTotal">0</b><br>学历称号：<b id="finalRank">托儿所</b></p><div class="actions"><button class="button" id="againBtn">再来一局</button><button class="button secondary" id="homeBtn">返回首页</button></div></section>
 </main><script>
 const $ = s => document.querySelector(s);
 const screens = [...document.querySelectorAll('.screen')];
 const ROWS = 16, COLS = 10, ROUND_SECONDS = 60;
-let grid = [], selected = [], selectionStart = null, selectionEnd = null, effects = [], drag = false, round = 0, total = 0, time = ROUND_SECONDS, timer = null, infinite = false, paused = false;
+const MODE_LABELS = { default: '默认模式', countdown: '倒计时模式', stopwatch: '计时模式' };
+const clientId = localStorage.getItem('sum-ten-client-id') || crypto.randomUUID();
+localStorage.setItem('sum-ten-client-id', clientId);
+let grid = [], selected = [], selectionStart = null, selectionEnd = null, effects = [], drag = false, round = 0, total = 0, time = ROUND_SECONDS, elapsed = 0, timer = null, mode = 'default', paused = false, gameEnded = false;
 
 const rank = score => score < 100 ? '托儿所' : score < 300 ? '小学' : score < 600 ? '中学' : '大学';
 function show(id) { screens.forEach(screen => screen.classList.toggle('active', screen.id === id)); }
@@ -31,8 +36,9 @@ function isSelected(row, col) { return selected.some(([r, c]) => r === row && c 
 function selectionSum() { return selected.reduce((sum, [row, col]) => sum + grid[row][col], 0); }
 function updateSum() { $('#selectionSum').textContent = selectionSum(); }
 function updateTimer() {
-  $('#timerLabel').textContent = infinite ? '无限时间' : paused ? '计时已暂停' : `剩余 ${time} 秒`;
-  $('#fuseFill').style.width = infinite ? '100%' : Math.max(0, time / ROUND_SECONDS * 100) + '%';
+  const label = paused ? '计时已暂停' : mode === 'countdown' ? `剩余 ${time} 秒` : mode === 'stopwatch' ? `已用 ${elapsed} 秒` : '自由模式 · 随时结束本局';
+  $('#timerLabel').textContent = label;
+  $('#fuseFill').style.width = mode === 'countdown' ? Math.max(0, time / ROUND_SECONDS * 100) + '%' : '100%';
 }
 
 function render() {
@@ -125,12 +131,14 @@ function finishSelection() {
   render();
 }
 
-function start(isInfinite = false) {
+function start(nextMode = 'default') {
   clearInterval(timer);
   round = 0;
   time = ROUND_SECONDS;
-  infinite = isInfinite;
+  elapsed = 0;
+  mode = nextMode;
   paused = false;
+  gameEnded = false;
   $('#pauseBtn').textContent = '⏸ 暂停计时';
   $('#pauseBtn').classList.remove('on');
   selected = [];
@@ -144,15 +152,39 @@ function start(isInfinite = false) {
   render();
   updateTimer();
   timer = setInterval(() => {
-    if (infinite || paused) return;
-    time -= 1;
+    if (paused) return;
+    elapsed += 1;
+    if (mode === 'countdown') time -= 1;
     updateTimer();
-    if (time <= 0) end();
+    if (mode === 'countdown' && time <= 0) end('时间到！');
   }, 1000);
 }
-function end() {
+function pendingRecords() {
+  try { return JSON.parse(localStorage.getItem('sum-ten-pending-records') || '[]'); } catch { return []; }
+}
+function savePendingRecords(records) { localStorage.setItem('sum-ten-pending-records', JSON.stringify(records)); }
+async function flushRecords() {
+  const records = pendingRecords();
+  if (!records.length || !navigator.onLine) return;
+  try {
+    const response = await fetch('/api/games', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ records }) });
+    if (response.ok) savePendingRecords([]);
+  } catch { /* Keep the local queue for the next connection. */ }
+}
+function recordGame() {
+  const records = pendingRecords();
+  records.push({ id: crypto.randomUUID(), clientId, mode, score: round, totalScore: total, durationSeconds: elapsed, endedAt: new Date().toISOString() });
+  savePendingRecords(records.slice(-20));
+  void flushRecords();
+}
+function end(title = '本局结束！') {
+  if (gameEnded) return;
+  gameEnded = true;
   clearInterval(timer);
+  recordGame();
+  $('#resultTitle').textContent = title;
   $('#finalRound').textContent = round;
+  $('#finalDuration').textContent = `${MODE_LABELS[mode]} · 本局用时：${elapsed} 秒`;
   $('#finalTotal').textContent = total;
   $('#finalRank').textContent = rank(total);
   $('#homeRank').textContent = rank(total);
@@ -179,9 +211,11 @@ board.addEventListener('pointermove', event => {
   if (cell) selectArea(Number(cell.dataset.r), Number(cell.dataset.c));
 }, { passive: false });
 board.addEventListener('contextmenu', event => event.preventDefault());
-$('#againBtn').addEventListener('click', () => start(false));
+$('#againBtn').addEventListener('click', () => start(mode));
 $('#homeBtn').addEventListener('click', () => show('home'));
-$('#infiniteBtn').addEventListener('click', () => start(true));
+$('#defaultBtn').addEventListener('click', () => start('default'));
+$('#countdownBtn').addEventListener('click', () => start('countdown'));
+$('#stopwatchBtn').addEventListener('click', () => start('stopwatch'));
 $('#shuffleBtn').addEventListener('click', () => {
   const values = grid.flat().filter(value => value !== null).sort(() => Math.random() - 0.5);
   grid = grid.map(row => row.map(value => value === null ? null : values.pop()));
@@ -190,14 +224,13 @@ $('#shuffleBtn').addEventListener('click', () => {
   render();
 });
 $('#pauseBtn').addEventListener('click', () => {
-  if (infinite) return;
   paused = !paused;
   $('#pauseBtn').textContent = paused ? '▶ 继续计时' : '⏸ 暂停计时';
   $('#pauseBtn').classList.toggle('on', paused);
   updateTimer();
 });
 $('#saveBtn').addEventListener('click', () => {
-  localStorage.setItem('kindergarten-ten-save', JSON.stringify({ grid, round, total, time, infinite }));
+  localStorage.setItem('kindergarten-ten-save', JSON.stringify({ grid, round, total, time, elapsed, mode }));
   $('#saveBtn').textContent = '✓ 已保存';
   setTimeout(() => { $('#saveBtn').textContent = '💾 保存进度'; }, 1200);
 });
@@ -208,7 +241,7 @@ $('#loadBtn').addEventListener('click', () => {
     const data = JSON.parse(saved);
     if (!Array.isArray(data.grid) || data.grid.length !== ROWS) throw new Error('invalid');
     clearInterval(timer);
-    ({ grid, round, total, time, infinite } = data);
+    ({ grid, round, total, time, elapsed = 0, mode = 'default' } = data);
     paused = false;
     selected = [];
     effects = [];
@@ -216,10 +249,12 @@ $('#loadBtn').addEventListener('click', () => {
     $('#totalScore').textContent = total;
     $('#gameRank').textContent = rank(total);
     show('game'); render(); updateSum(); updateTimer();
-    timer = setInterval(() => { if (infinite || paused) return; time -= 1; updateTimer(); if (time <= 0) end(); }, 1000);
+    gameEnded = false;
+    timer = setInterval(() => { if (paused) return; elapsed += 1; if (mode === 'countdown') time -= 1; updateTimer(); if (mode === 'countdown' && time <= 0) end('时间到！'); }, 1000);
   } catch { alert('进度数据无法读取。'); }
 });
-$('#restartBtn').addEventListener('click', () => start(infinite));
+$('#restartBtn').addEventListener('click', () => start(mode));
+$('#endBtn').addEventListener('click', () => end('本局结束！'));
 $('#quitBtn').addEventListener('click', () => {
   clearInterval(timer);
   drag = false;
@@ -229,5 +264,8 @@ $('#quitBtn').addEventListener('click', () => {
   effects = [];
   show('home');
 });
+window.addEventListener('online', () => { void flushRecords(); });
+if ('serviceWorker' in navigator) window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').catch(() => {}); });
+void flushRecords();
 $('#homeRank').textContent = rank(total);
 </script></body></html>
