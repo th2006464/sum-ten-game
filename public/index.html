@@ -16,13 +16,13 @@
 <body><main class="app">
 <section id="loading" class="screen"><div></div></section>
 <section id="home" class="screen home active"><div class="topbar"><div class="score">当前智力<br><strong id="totalScore">0</strong></div><div class="rank" id="homeRank">托儿所</div></div><div class="panel"><h2>开局托儿所</h2><p>框选相邻数字，让它们的总和等于 <b>10</b>。选得越多，分数越高！</p><button class="button" id="startBtn" onclick="start(false)">限时挑战</button><p style="margin:16px 0 0"><button class="button secondary small-btn" id="infiniteBtn">无限时间模式</button> <button class="button secondary small-btn" id="loadBtn">读取进度</button></p></div></section>
-<section id="game" class="screen"><div class="topbar"><div class="score">当前智力<br><strong id="roundScore">0</strong></div><div class="rank" id="gameRank">托儿所</div></div><div class="fuse"><i id="fuseFill"></i></div><div class="timer-label" id="timerLabel">剩余 60 秒</div><div class="game-score">连续框选相邻数字 · 总和：<span id="selectionSum">0</span></div><div class="board" id="board"></div><div class="toolbox"><button class="tool" id="shuffleBtn">🔀 洗牌</button><button class="tool" id="pauseBtn">⏸ 暂停计时</button><button class="tool" id="saveBtn">💾 保存进度</button><button class="tool" id="restartBtn">↻ 重新开始</button></div></section>
+<section id="game" class="screen"><div class="topbar"><div class="score">当前智力<br><strong id="roundScore">0</strong></div><div class="rank" id="gameRank">托儿所</div></div><div class="fuse"><i id="fuseFill"></i></div><div class="timer-label" id="timerLabel">剩余 60 秒</div><div class="game-score">拖动框选区域 · 区域总和：<span id="selectionSum">0</span></div><div class="board" id="board"></div><div class="toolbox"><button class="tool" id="shuffleBtn">🔀 洗牌</button><button class="tool" id="pauseBtn">⏸ 暂停计时</button><button class="tool" id="saveBtn">💾 保存进度</button><button class="tool" id="restartBtn">↻ 重新开始</button></div></section>
 <section id="result" class="screen result"><div class="duck">🐥</div><h1>时间到！</h1><p>本局智力</p><div class="big" id="finalRound">0</div><p>总智力：<b id="finalTotal">0</b><br>学历称号：<b id="finalRank">托儿所</b></p><div class="actions"><button class="button" id="againBtn">再来一局</button><button class="button secondary" id="homeBtn">返回首页</button></div></section>
 </main><script>
 const $ = s => document.querySelector(s);
 const screens = [...document.querySelectorAll('.screen')];
 const ROWS = 16, COLS = 10, ROUND_SECONDS = 60;
-let grid = [], selected = [], drag = false, round = 0, total = 0, time = ROUND_SECONDS, timer = null, infinite = false, paused = false;
+let grid = [], selected = [], selectionStart = null, drag = false, round = 0, total = 0, time = ROUND_SECONDS, timer = null, infinite = false, paused = false;
 
 const rank = score => score < 100 ? '托儿所' : score < 300 ? '小学' : score < 600 ? '中学' : '大学';
 function show(id) { screens.forEach(screen => screen.classList.toggle('active', screen.id === id)); }
@@ -50,11 +50,19 @@ function render() {
   }));
 }
 
-function addCell(row, col) {
-  if (grid[row][col] === null || isSelected(row, col)) return;
-  const [lastRow, lastCol] = selected[selected.length - 1];
-  if (Math.abs(lastRow - row) + Math.abs(lastCol - col) !== 1) return;
-  selected.push([row, col]);
+function selectArea(endRow, endCol) {
+  if (!selectionStart) return;
+  const [startRow, startCol] = selectionStart;
+  const rowMin = Math.min(startRow, endRow);
+  const rowMax = Math.max(startRow, endRow);
+  const colMin = Math.min(startCol, endCol);
+  const colMax = Math.max(startCol, endCol);
+  selected = [];
+  for (let row = rowMin; row <= rowMax; row += 1) {
+    for (let col = colMin; col <= colMax; col += 1) {
+      if (grid[row][col] !== null) selected.push([row, col]);
+    }
+  }
   updateSum();
   render();
 }
@@ -62,6 +70,7 @@ function addCell(row, col) {
 function finishSelection() {
   if (!drag) return;
   drag = false;
+  selectionStart = null;
   const sum = selectionSum();
   if (selected.length >= 2 && sum === 10) {
     selected.forEach(([row, col]) => { grid[row][col] = null; });
@@ -85,6 +94,7 @@ function start(isInfinite = false) {
   $('#pauseBtn').textContent = '⏸ 暂停计时';
   $('#pauseBtn').classList.remove('on');
   selected = [];
+  selectionStart = null;
   newGrid();
   $('#roundScore').textContent = round;
   $('#gameRank').textContent = rank(total);
@@ -114,16 +124,16 @@ board.addEventListener('pointerdown', event => {
   event.preventDefault();
   window.getSelection?.().removeAllRanges();
   drag = true;
-  selected = [[Number(cell.dataset.r), Number(cell.dataset.c)]];
+  selectionStart = [Number(cell.dataset.r), Number(cell.dataset.c)];
+  selected = [];
   board.setPointerCapture?.(event.pointerId);
-  updateSum();
-  render();
+  selectArea(Number(cell.dataset.r), Number(cell.dataset.c));
 }, { passive: false });
 board.addEventListener('pointermove', event => {
   if (!drag) return;
   event.preventDefault();
   const cell = document.elementFromPoint(event.clientX, event.clientY)?.closest('.cell');
-  if (cell) addCell(Number(cell.dataset.r), Number(cell.dataset.c));
+  if (cell) selectArea(Number(cell.dataset.r), Number(cell.dataset.c));
 }, { passive: false });
 board.addEventListener('contextmenu', event => event.preventDefault());
 $('#againBtn').addEventListener('click', () => start(false));
