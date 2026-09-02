@@ -15,7 +15,7 @@
   },
   "routes": [
     {
-      "pattern": "sum10.game.foxtang.com",
+      "pattern": "sum-ten-game.game.foxtang.com",
       "custom_domain": true
     }
   ]
