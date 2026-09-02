@@ -17,7 +17,7 @@
 </style></head>
 <body><main class="app">
 <section id="loading" class="screen"><div></div></section>
-<section id="home" class="screen home active"><div class="topbar"><div class="score">当前智力<br><strong id="totalScore">0</strong></div><div class="rank" id="homeRank">托儿所</div></div><div class="panel"><h2>开局托儿所</h2><p>框选区域内的数字，让总和等于 <b>10</b>。选得越多，分数越高！</p><div class="mode-actions"><button class="button" id="defaultBtn">默认模式</button><button class="button secondary" id="countdownBtn">倒计时模式</button><button class="button secondary" id="stopwatchBtn">计时模式</button></div><button class="button secondary small-btn load-action" id="loadBtn">读取进度</button><button class="button secondary small-btn load-action" id="rulesBtn">游戏说明</button><button class="button secondary small-btn load-action" id="leaderboardBtn">排行榜</button></div></section>
+<section id="home" class="screen home active"><div class="topbar"><div class="score">当前智力<br><strong id="totalScore">0</strong></div><div class="rank" id="homeRank">托儿所</div></div><div class="panel"><h2>开局托儿所</h2><p>框选区域内的数字，让总和等于 <b>10</b>。选得越多，分数越高！</p><div class="mode-actions"><button class="button" id="countdownBtn">倒计时模式</button><button class="button secondary" id="stopwatchBtn">计时模式</button></div><button class="button secondary small-btn load-action" id="loadBtn">读取进度</button><button class="button secondary small-btn load-action" id="rulesBtn">游戏说明</button><button class="button secondary small-btn load-action" id="leaderboardBtn">排行榜</button></div></section>
 <section id="leaderboard" class="screen leaderboard"><h1>排行榜</h1><div class="leaderboard-list" id="leaderboardList"><div class="leaderboard-empty">正在加载…</div></div><div class="actions"><button class="button secondary" id="leaderboardHome">返回首页</button></div></section>
 <section id="game" class="screen"><div class="topbar"><div class="score">当前智力<br><strong id="roundScore">0</strong></div><div class="rank" id="gameRank">托儿所</div></div><div class="fuse"><i id="fuseFill"></i></div><div class="timer-label" id="timerLabel">自由模式</div><div class="game-score">拖动框选区域 · 区域总和：<span id="selectionSum">0</span></div><div class="board" id="board"></div><div class="toolbox"><button class="tool" id="shuffleBtn">🔀 洗牌</button><button class="tool" id="settingsBtn">⚙ 设置</button></div></section>
 <section id="result" class="screen result"><div class="duck">🐥</div><h1 id="resultTitle">本局结束！</h1><p>本局智力</p><div class="big" id="finalRound">0</div><p id="finalDuration">本局用时：0 秒</p><p>总智力：<b id="finalTotal">0</b><br>学历称号：<b id="finalRank">托儿所</b></p><p id="finalRecordStatus">本局数据正在保存…</p><button class="button secondary small-btn" id="resultLeaderboard">查看排行榜</button><div class="actions"><button class="button" id="againBtn">再来一局</button><button class="button secondary" id="homeBtn">返回首页</button></div></section>
@@ -28,10 +28,10 @@
 const $ = s => document.querySelector(s);
 const screens = [...document.querySelectorAll('.screen')];
 const ROWS = 16, COLS = 10, ROUND_SECONDS = 60, GRID_GAP = 7;
-const MODE_LABELS = { default: '默认模式', countdown: '倒计时模式', stopwatch: '计时模式' };
+const MODE_LABELS = { default: '计时模式', countdown: '倒计时模式', stopwatch: '计时模式' };
 const clientId = localStorage.getItem('sum-ten-client-id') || crypto.randomUUID();
 localStorage.setItem('sum-ten-client-id', clientId);
-let grid = [], selected = [], selectionStart = null, selectionEnd = null, drag = false, round = 0, total = 0, time = ROUND_SECONDS, elapsed = 0, timer = null, mode = 'default', paused = false, gameEnded = false, lastRecordSync = Promise.resolve(false);
+let grid = [], selected = [], selectionStart = null, selectionEnd = null, drag = false, round = 0, total = 0, time = ROUND_SECONDS, elapsed = 0, timer = null, mode = 'countdown', paused = false, gameEnded = false, lastRecordSync = Promise.resolve(false);
 
 const rank = score => score < 100 ? '托儿所' : score < 300 ? '小学' : score < 600 ? '中学' : '大学';
 function show(id) { screens.forEach(screen => screen.classList.toggle('active', screen.id === id)); }
@@ -137,7 +137,7 @@ function finishSelection() {
   if (effect) showTenEffect(effect);
 }
 
-function start(nextMode = 'default') {
+function start(nextMode = 'countdown') {
   clearInterval(timer);
   round = 0;
   time = ROUND_SECONDS;
@@ -215,6 +215,16 @@ function goHome() {
   clearEffects();
   show('home');
 }
+function boardPositionFromPoint(clientX, clientY) {
+  const board = $('#board');
+  const rect = board.getBoundingClientRect();
+  const cellSize = board.querySelector('.cell')?.offsetWidth;
+  if (!cellSize) return null;
+  const inset = 10;
+  const col = Math.floor((clientX - rect.left - inset) / (cellSize + GRID_GAP));
+  const row = Math.floor((clientY - rect.top - inset) / (cellSize + GRID_GAP));
+  return row >= 0 && row < ROWS && col >= 0 && col < COLS ? [row, col] : null;
+}
 function formatDuration(seconds) { return `${seconds} 秒`; }
 async function openLeaderboard() {
   show('leaderboard');
@@ -254,27 +264,26 @@ async function openLeaderboard() {
 window.addEventListener('pointerup', finishSelection);
 const board = $('#board');
 board.addEventListener('pointerdown', event => {
-  const cell = event.target.closest('.cell');
-  if (!cell || cell.classList.contains('empty')) return;
+  const position = boardPositionFromPoint(event.clientX, event.clientY);
+  if (!position) return;
   event.preventDefault();
   window.getSelection?.().removeAllRanges();
   drag = true;
-  selectionStart = [Number(cell.dataset.r), Number(cell.dataset.c)];
+  selectionStart = position;
   selectionEnd = selectionStart;
   selected = [];
   board.setPointerCapture?.(event.pointerId);
-  selectArea(Number(cell.dataset.r), Number(cell.dataset.c));
+  selectArea(...position);
 }, { passive: false });
 board.addEventListener('pointermove', event => {
   if (!drag) return;
   event.preventDefault();
-  const cell = document.elementFromPoint(event.clientX, event.clientY)?.closest('.cell');
-  if (cell) selectArea(Number(cell.dataset.r), Number(cell.dataset.c));
+  const position = boardPositionFromPoint(event.clientX, event.clientY);
+  if (position) selectArea(...position);
 }, { passive: false });
 board.addEventListener('contextmenu', event => event.preventDefault());
 $('#againBtn').addEventListener('click', () => start(mode));
 $('#homeBtn').addEventListener('click', () => show('home'));
-$('#defaultBtn').addEventListener('click', () => start('default'));
 $('#countdownBtn').addEventListener('click', () => start('countdown'));
 $('#stopwatchBtn').addEventListener('click', () => start('stopwatch'));
 $('#rulesBtn').addEventListener('click', () => $('#rulesModal').classList.remove('hidden'));
@@ -307,7 +316,8 @@ $('#loadBtn').addEventListener('click', () => {
     const data = JSON.parse(saved);
     if (!Array.isArray(data.grid) || data.grid.length !== ROWS) throw new Error('invalid');
     clearInterval(timer);
-    ({ grid, round, total, time, elapsed = 0, mode = 'default' } = data);
+    ({ grid, round, total, time, elapsed = 0, mode = 'stopwatch' } = data);
+    mode = mode === 'countdown' ? 'countdown' : 'stopwatch';
     paused = false;
     selected = [];
     clearEffects();
