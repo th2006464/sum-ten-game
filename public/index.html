@@ -19,7 +19,7 @@
 <section id="loading" class="screen"><div></div></section>
 <section id="home" class="screen home active"><div class="topbar"><div class="score">当前智力<br><strong id="totalScore">0</strong></div><div class="rank" id="homeRank">托儿所</div></div><div class="panel"><h2>开局托儿所</h2><p>框选区域内的数字，让总和等于 <b>10</b>。选得越多，分数越高！</p><button class="button" id="defaultBtn">默认模式</button><p style="margin:16px 0 0"><button class="button secondary small-btn" id="countdownBtn">倒计时模式</button> <button class="button secondary small-btn" id="stopwatchBtn">计时模式</button></p><p style="margin:12px 0 0"><button class="button secondary small-btn" id="loadBtn">读取进度</button></p></div></section>
 <section id="game" class="screen"><div class="topbar"><div class="score">当前智力<br><strong id="roundScore">0</strong></div><div class="rank" id="gameRank">托儿所</div></div><div class="fuse"><i id="fuseFill"></i></div><div class="timer-label" id="timerLabel">自由模式</div><div class="game-score">拖动框选区域 · 区域总和：<span id="selectionSum">0</span></div><div class="board" id="board"></div><div class="toolbox"><button class="tool" id="shuffleBtn">🔀 洗牌</button><button class="tool" id="pauseBtn">⏸ 暂停计时</button><button class="tool" id="saveBtn">💾 保存进度</button><button class="tool" id="restartBtn">↻ 重新开始</button><button class="tool" id="endBtn">✓ 结束本局</button><button class="tool" id="quitBtn">⌂ 返回主页</button></div></section>
-<section id="result" class="screen result"><div class="duck">🐥</div><h1 id="resultTitle">本局结束！</h1><p>本局智力</p><div class="big" id="finalRound">0</div><p id="finalDuration">本局用时：0 秒</p><p>总智力：<b id="finalTotal">0</b><br>学历称号：<b id="finalRank">托儿所</b></p><div class="actions"><button class="button" id="againBtn">再来一局</button><button class="button secondary" id="homeBtn">返回首页</button></div></section>
+<section id="result" class="screen result"><div class="duck">🐥</div><h1 id="resultTitle">本局结束！</h1><p>本局智力</p><div class="big" id="finalRound">0</div><p id="finalDuration">本局用时：0 秒</p><p>总智力：<b id="finalTotal">0</b><br>学历称号：<b id="finalRank">托儿所</b></p><p id="finalRecordStatus">本局数据正在保存…</p><div class="actions"><button class="button" id="againBtn">再来一局</button><button class="button secondary" id="homeBtn">返回首页</button></div></section>
 </main><script>
 const $ = s => document.querySelector(s);
 const screens = [...document.querySelectorAll('.screen')];
@@ -165,23 +165,24 @@ function pendingRecords() {
 function savePendingRecords(records) { localStorage.setItem('sum-ten-pending-records', JSON.stringify(records)); }
 async function flushRecords() {
   const records = pendingRecords();
-  if (!records.length || !navigator.onLine) return;
+  if (!records.length) return true;
+  if (!navigator.onLine) return false;
   try {
     const response = await fetch('/api/games', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ records }) });
-    if (response.ok) savePendingRecords([]);
+    if (response.ok) { savePendingRecords([]); return true; }
   } catch { /* Keep the local queue for the next connection. */ }
+  return false;
 }
 function recordGame() {
   const records = pendingRecords();
   records.push({ id: crypto.randomUUID(), clientId, mode, score: round, totalScore: total, durationSeconds: elapsed, endedAt: new Date().toISOString() });
   savePendingRecords(records.slice(-20));
-  void flushRecords();
+  return flushRecords();
 }
 function end(title = '本局结束！') {
   if (gameEnded) return;
   gameEnded = true;
   clearInterval(timer);
-  recordGame();
   $('#resultTitle').textContent = title;
   $('#finalRound').textContent = round;
   $('#finalDuration').textContent = `${MODE_LABELS[mode]} · 本局用时：${elapsed} 秒`;
@@ -189,6 +190,10 @@ function end(title = '本局结束！') {
   $('#finalRank').textContent = rank(total);
   $('#homeRank').textContent = rank(total);
   show('result');
+  $('#finalRecordStatus').textContent = '本局数据已保存在本机，正在同步…';
+  void recordGame().then(synced => {
+    $('#finalRecordStatus').textContent = synced ? '✓ 本局数据已同步到历史记录' : '离线中：本局数据会在联网后自动同步';
+  });
 }
 window.addEventListener('pointerup', finishSelection);
 const board = $('#board');
