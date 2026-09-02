@@ -22,6 +22,21 @@ export default {
       return Response.json({ ok: true, service: 'sum-ten-game-api', database: Boolean(env.DB) });
     }
 
+    if (url.pathname === '/api/leaderboard' && request.method === 'GET') {
+      try {
+        const { results } = await env.DB.prepare(
+          `SELECT mode, score, duration_seconds AS durationSeconds, ended_at AS endedAt
+             FROM game_records
+            ORDER BY score DESC, duration_seconds ASC, created_at DESC
+            LIMIT 20`
+        ).all();
+        return Response.json({ ok: true, records: results });
+      } catch (error) {
+        console.error(JSON.stringify({ event: 'leaderboard_failed', message: String(error) }));
+        return Response.json({ ok: false, error: 'Could not load leaderboard.' }, { status: 500 });
+      }
+    }
+
     if (url.pathname === '/api/games' && request.method === 'GET') {
       const clientId = url.searchParams.get('clientId') || '';
       const requestedLimit = Number(url.searchParams.get('limit') || 20);
