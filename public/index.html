@@ -226,6 +226,14 @@ function boardPositionFromPoint(clientX, clientY) {
   return row >= 0 && row < ROWS && col >= 0 && col < COLS ? [row, col] : null;
 }
 function formatDuration(seconds) { return `${seconds} 秒`; }
+function formatBeijingTime(value) {
+  const parts = new Intl.DateTimeFormat('zh-CN', {
+    timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+  }).formatToParts(new Date(value));
+  const valueFor = type => parts.find(part => part.type === type)?.value || '';
+  return `${valueFor('year')}年${valueFor('month')}月${valueFor('day')}日 ${valueFor('hour')}:${valueFor('minute')}`;
+}
 async function openLeaderboard(filter = 'all', locked = false) {
   show('leaderboard');
   const list = $('#leaderboardList');
@@ -255,7 +263,7 @@ async function openLeaderboard(filter = 'all', locked = false) {
       const details = document.createElement('span');
       details.textContent = MODE_LABELS[record.mode] || '计时模式';
       const time = document.createElement('small');
-      time.textContent = `用时 ${formatDuration(record.durationSeconds)}`;
+      time.textContent = `用时 ${formatDuration(record.durationSeconds)} · ${formatBeijingTime(record.endedAt)}`;
       details.appendChild(time);
       const score = document.createElement('strong');
       score.className = 'leaderboard-score';
