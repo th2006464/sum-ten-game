@@ -24,12 +24,19 @@ export default {
 
     if (url.pathname === '/api/leaderboard' && request.method === 'GET') {
       try {
-        const { results } = await env.DB.prepare(
+        const requestedMode = url.searchParams.get('mode');
+        if (requestedMode && !modes.has(requestedMode)) {
+          return Response.json({ ok: false, error: 'Invalid mode.' }, { status: 400 });
+        }
+        const query =
           `SELECT mode, score, duration_seconds AS durationSeconds, ended_at AS endedAt
              FROM game_records
+            ${requestedMode ? 'WHERE mode = ?' : ''}
             ORDER BY score DESC, duration_seconds ASC, created_at DESC
-            LIMIT 20`
-        ).all();
+            LIMIT 20`;
+        const { results } = requestedMode
+          ? await env.DB.prepare(query).bind(requestedMode).all()
+          : await env.DB.prepare(query).all();
         return Response.json({ ok: true, records: results });
       } catch (error) {
         console.error(JSON.stringify({ event: 'leaderboard_failed', message: String(error) }));
