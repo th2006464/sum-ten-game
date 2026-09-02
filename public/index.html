@@ -17,10 +17,12 @@
 </style></head>
 <body><main class="app">
 <section id="loading" class="screen"><div></div></section>
-<section id="home" class="screen home active"><div class="topbar"><div class="score">当前智力<br><strong id="totalScore">0</strong></div><div class="rank" id="homeRank">托儿所</div></div><div class="panel"><h2>开局托儿所</h2><p>框选区域内的数字，让总和等于 <b>10</b>。选得越多，分数越高！</p><div class="mode-actions"><button class="button" id="defaultBtn">默认模式</button><button class="button secondary" id="countdownBtn">倒计时模式</button><button class="button secondary" id="stopwatchBtn">计时模式</button></div><button class="button secondary small-btn load-action" id="loadBtn">读取进度</button></div></section>
-<section id="game" class="screen"><div class="topbar"><div class="score">当前智力<br><strong id="roundScore">0</strong></div><div class="rank" id="gameRank">托儿所</div></div><div class="fuse"><i id="fuseFill"></i></div><div class="timer-label" id="timerLabel">自由模式</div><div class="game-score">拖动框选区域 · 区域总和：<span id="selectionSum">0</span></div><div class="board" id="board"></div><div class="toolbox"><button class="tool" id="shuffleBtn">🔀 洗牌</button><button class="tool" id="pauseBtn">⏸ 暂停计时</button><button class="tool" id="saveBtn">💾 保存进度</button><button class="tool" id="restartBtn">↻ 重新开始</button><button class="tool" id="endBtn">✓ 结束本局</button><button class="tool" id="quitBtn">⌂ 返回主页</button></div></section>
+<section id="home" class="screen home active"><div class="topbar"><div class="score">当前智力<br><strong id="totalScore">0</strong></div><div class="rank" id="homeRank">托儿所</div></div><div class="panel"><h2>开局托儿所</h2><p>框选区域内的数字，让总和等于 <b>10</b>。选得越多，分数越高！</p><div class="mode-actions"><button class="button" id="defaultBtn">默认模式</button><button class="button secondary" id="countdownBtn">倒计时模式</button><button class="button secondary" id="stopwatchBtn">计时模式</button></div><button class="button secondary small-btn load-action" id="loadBtn">读取进度</button><button class="button secondary small-btn load-action" id="rulesBtn">游戏说明</button></div></section>
+<section id="game" class="screen"><div class="topbar"><div class="score">当前智力<br><strong id="roundScore">0</strong></div><div class="rank" id="gameRank">托儿所</div></div><div class="fuse"><i id="fuseFill"></i></div><div class="timer-label" id="timerLabel">自由模式</div><div class="game-score">拖动框选区域 · 区域总和：<span id="selectionSum">0</span></div><div class="board" id="board"></div><div class="toolbox"><button class="tool" id="shuffleBtn">🔀 洗牌</button><button class="tool" id="pauseBtn">⏸ 暂停计时</button><button class="tool" id="settingsBtn">⚙ 设置</button><button class="tool" id="restartBtn">↻ 重新开始</button><button class="tool" id="endBtn">✓ 结束本局</button></div></section>
 <section id="result" class="screen result"><div class="duck">🐥</div><h1 id="resultTitle">本局结束！</h1><p>本局智力</p><div class="big" id="finalRound">0</div><p id="finalDuration">本局用时：0 秒</p><p>总智力：<b id="finalTotal">0</b><br>学历称号：<b id="finalRank">托儿所</b></p><p id="finalRecordStatus">本局数据正在保存…</p><div class="actions"><button class="button" id="againBtn">再来一局</button><button class="button secondary" id="homeBtn">返回首页</button></div></section>
 <div class="effects-layer" id="effectsLayer"></div>
+<div class="modal-wrap hidden" id="settingsModal"><div class="modal"><h2>设置</h2><p>可保存当前棋盘，稍后从首页继续游戏。</p><div class="actions"><button class="button secondary small-btn" id="settingsResume">继续游戏</button><button class="button secondary small-btn" id="settingsSave">保存进度</button><button class="button small-btn" id="settingsHome">返回主页</button></div></div></div>
+<div class="modal-wrap hidden" id="rulesModal"><div class="modal"><h2>游戏说明</h2><p>拖动框选一个矩形区域，区域内所有未消除数字的总和正好等于 10，即可消除。</p><p>空位不会计入总和。可使用洗牌整理棋盘；倒计时模式在 60 秒后结束，计时模式会记录本局总用时。</p><button class="button" id="rulesClose">我知道了</button></div></div>
 </main><script>
 const $ = s => document.querySelector(s);
 const screens = [...document.querySelectorAll('.screen')];
@@ -198,6 +200,20 @@ function end(title = '本局结束！') {
     $('#finalRecordStatus').textContent = synced ? '✓ 本局数据已同步到历史记录' : '离线中：本局数据会在联网后自动同步';
   });
 }
+function saveGame() {
+  localStorage.setItem('kindergarten-ten-save', JSON.stringify({ grid, round, total, time, elapsed, mode }));
+  $('#settingsSave').textContent = '✓ 已保存';
+  setTimeout(() => { $('#settingsSave').textContent = '保存进度'; }, 1200);
+}
+function goHome() {
+  clearInterval(timer);
+  drag = false;
+  selected = [];
+  selectionStart = null;
+  selectionEnd = null;
+  clearEffects();
+  show('home');
+}
 window.addEventListener('pointerup', finishSelection);
 const board = $('#board');
 board.addEventListener('pointerdown', event => {
@@ -224,6 +240,8 @@ $('#homeBtn').addEventListener('click', () => show('home'));
 $('#defaultBtn').addEventListener('click', () => start('default'));
 $('#countdownBtn').addEventListener('click', () => start('countdown'));
 $('#stopwatchBtn').addEventListener('click', () => start('stopwatch'));
+$('#rulesBtn').addEventListener('click', () => $('#rulesModal').classList.remove('hidden'));
+$('#rulesClose').addEventListener('click', () => $('#rulesModal').classList.add('hidden'));
 $('#shuffleBtn').addEventListener('click', () => {
   const values = grid.flat().filter(value => value !== null).sort(() => Math.random() - 0.5);
   grid = grid.map(row => row.map(value => value === null ? null : values.pop()));
@@ -237,11 +255,10 @@ $('#pauseBtn').addEventListener('click', () => {
   $('#pauseBtn').classList.toggle('on', paused);
   updateTimer();
 });
-$('#saveBtn').addEventListener('click', () => {
-  localStorage.setItem('kindergarten-ten-save', JSON.stringify({ grid, round, total, time, elapsed, mode }));
-  $('#saveBtn').textContent = '✓ 已保存';
-  setTimeout(() => { $('#saveBtn').textContent = '💾 保存进度'; }, 1200);
-});
+$('#settingsBtn').addEventListener('click', () => $('#settingsModal').classList.remove('hidden'));
+$('#settingsResume').addEventListener('click', () => $('#settingsModal').classList.add('hidden'));
+$('#settingsSave').addEventListener('click', saveGame);
+$('#settingsHome').addEventListener('click', () => { $('#settingsModal').classList.add('hidden'); goHome(); });
 $('#loadBtn').addEventListener('click', () => {
   const saved = localStorage.getItem('kindergarten-ten-save');
   if (!saved) { alert('还没有保存过进度。'); return; }
@@ -263,15 +280,6 @@ $('#loadBtn').addEventListener('click', () => {
 });
 $('#restartBtn').addEventListener('click', () => start(mode));
 $('#endBtn').addEventListener('click', () => end('本局结束！'));
-$('#quitBtn').addEventListener('click', () => {
-  clearInterval(timer);
-  drag = false;
-  selected = [];
-  selectionStart = null;
-  selectionEnd = null;
-  clearEffects();
-  show('home');
-});
 window.addEventListener('online', () => { void flushRecords(); });
 if ('serviceWorker' in navigator) window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').catch(() => {}); });
 void flushRecords();
