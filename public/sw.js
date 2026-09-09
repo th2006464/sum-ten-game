@@ -1,5 +1,8 @@
-const CACHE_NAME = 'sum-ten-shell-v1';
-const APP_SHELL = ['/', '/index.html', '/manifest.webmanifest'];
+const CACHE_NAME = 'sum-ten-shell-v2';
+const APP_SHELL = [
+  '/', '/index.html', '/manifest.webmanifest',
+  '/audio/background.mp3', '/audio/start.mp3', '/audio/merge.mp3',
+];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));

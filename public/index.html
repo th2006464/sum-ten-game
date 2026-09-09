@@ -13,7 +13,7 @@
 .topbar{display:flex;justify-content:space-between;align-items:center;background:#e7f0dd;border:3px solid #587a79;border-radius:18px;padding:10px 14px;box-shadow:0 5px 0 #78969a;margin-bottom:14px}.score strong{font-size:25px}.rank{font-weight:900;color:#537d5d;font-size:18px}.panel{background:rgba(255,248,223,.75);border:3px solid #68888a;border-radius:25px;padding:22px;box-shadow:0 6px 0 #829da0}.home .panel{text-align:center;margin-top:25px}.home h2{font-size:27px;margin:0 0 10px}.home p{line-height:1.7;margin:10px 0 20px}.button{border:2px solid #b58f2e;border-radius:14px;padding:14px 24px;background:var(--yellow);color:#594b26;font:900 21px inherit;cursor:pointer;box-shadow:none;transition:background .12s}.button:active{transform:none}.small-btn{font-size:15px;padding:9px 12px;border-radius:10px}.mode-actions{display:grid;gap:11px}.mode-actions .button{width:100%;font-size:18px;padding:12px}.load-action{width:100%;margin-top:12px}.home-footer{margin-top:auto;display:flex;justify-content:center;gap:10px;padding-top:20px}.secondary{background:#e6f0e4;border-color:#698889;color:var(--ink)}
 .fuse{height:19px;background:#dce9d6;border:3px solid #587a79;border-radius:99px;overflow:hidden;margin-bottom:7px;position:relative;flex:none}.fuse i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ef6f54,#ffd558);transform-origin:left}.fuse:after{content:"✦";position:absolute;right:2px;top:-8px;font-size:23px;color:#fff0a2}.game-score{text-align:center;font-weight:900;margin:-4px 0 7px;flex:none}.timer-label{text-align:center;font-size:14px;font-weight:800;margin-bottom:7px;flex:none}.board{--cell-gap:7px;--cell-size:min(calc((100vw - 117px) / 10),calc((100dvh - 350px) / 16),48px);display:grid;grid-template-columns:repeat(10,var(--cell-size));grid-template-rows:repeat(16,var(--cell-size));gap:var(--cell-gap);width:max-content;align-self:center;background:#147a58;padding:6px;border:4px solid #8b6223;border-radius:18px;box-shadow:0 5px 0 #6d8e88;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;position:relative}.cell{width:var(--cell-size);height:var(--cell-size);background:#f9f8e8;border:1px solid #dedcc9;border-radius:2px;display:grid;place-items:center;font-size:clamp(14px,calc(var(--cell-size) * .57),24px);font-weight:900;color:#182527;cursor:pointer;transition:.08s;box-shadow:none}.cell.selected{background:#f9f8e8;border-color:#dedcc9;transform:none;box-shadow:none}.cell.empty{background:transparent;border-color:transparent;box-shadow:none;cursor:default}.selection-outline{position:absolute;border:1px solid #ffe15a;border-radius:3px;background:transparent;pointer-events:none;z-index:2;transition:left .04s,top .04s,width .04s,height .04s}.ten-effect{position:absolute;display:grid;place-items:center;width:clamp(32px,calc(var(--cell-size) * 1.25),52px);height:clamp(32px,calc(var(--cell-size) * 1.25),52px);border:2px solid #c3962b;border-radius:5px;background:#ffe66a;color:#243033;font-size:clamp(18px,calc(var(--cell-size) * .7),30px);font-weight:900;box-shadow:2px 3px 0 #96702c;pointer-events:none;z-index:4;animation:ten-pop .8s ease-out forwards}@keyframes ten-pop{0%{opacity:0;transform:translate(-50%,-20%) scale(.45) rotate(-8deg)}25%{opacity:1;transform:translate(-50%,-55%) scale(1.1) rotate(5deg)}100%{opacity:0;transform:translate(-50%,-165%) scale(.88) rotate(-4deg)}}.toolbox{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;flex:none}#game .toolbox{grid-template-columns:repeat(2,1fr)}.tool{border:2px solid #587a79;border-radius:10px;padding:7px 3px;background:#e8f0df;color:#20333a;font:800 12px inherit;cursor:pointer;box-shadow:none;white-space:nowrap}.tool:active{transform:none}.tool.on{background:#ffd85a}.hint{animation:pulse .55s ease-in-out 3}@keyframes pulse{50%{background:#ffdd56;transform:scale(1.1)}}
 @media (max-height:720px){.app{padding-top:8px;padding-bottom:8px}.topbar{padding:7px 12px;margin-bottom:8px}.score strong{font-size:21px}.fuse{height:16px}.toolbox{margin-top:7px}.tool{padding:5px}.game-score,.timer-label{margin-bottom:4px}}
-.effects-layer{position:absolute;inset:0;z-index:4;pointer-events:none}.modal-wrap{position:absolute;inset:0;background:#213c3d88;display:grid;place-items:center;padding:22px;z-index:5}.modal{max-width:420px;background:var(--cream);border:4px solid #587a79;border-radius:25px;padding:25px;box-shadow:0 8px 0 #496c70;text-align:center}.modal h2{margin:0 0 12px}.modal p{line-height:1.75;text-align:left}.settings-actions{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:20px}.settings-actions .button{width:100%;padding:10px 4px;font-size:15px}.leaderboard{padding-top:12px}.leaderboard h1{text-align:center;margin:8px 0 12px}.leaderboard-filters{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:10px}.leaderboard-filters .tool{padding:8px 3px}.leaderboard-filters .tool.on{border-color:#b58f2e;background:#ffd85a}.leaderboard-list{background:#f9f8e8;border:3px solid #587a79;border-radius:16px;overflow:auto;max-height:65dvh}.leaderboard-row{display:grid;grid-template-columns:40px 1fr auto;gap:8px;align-items:center;padding:11px 12px;border-bottom:1px solid #ccd6c9;font-weight:800}.leaderboard-row:last-child{border-bottom:0}.leaderboard-row small{display:block;font-weight:600;color:#587a79;margin-top:2px}.leaderboard-score{font-size:22px;color:#bd733d}.leaderboard-empty{text-align:center;padding:28px 14px;color:#587a79}.result{text-align:center;margin:auto 0}.result .duck{font-size:75px;margin:10px}.result h1{font-size:34px;margin:8px}.result .big{font-size:42px;font-weight:900;color:#bd733d}.actions{display:flex;justify-content:center;gap:10px;margin-top:25px}.hidden{display:none!important}
+.effects-layer{position:absolute;inset:0;z-index:4;pointer-events:none}.countdown-overlay{position:absolute;inset:0;display:grid;place-items:center;background:#20333a55;z-index:6;pointer-events:auto}.countdown-overlay strong{display:grid;place-items:center;width:118px;height:118px;border-radius:50%;background:#ffe66a;border:4px solid #8b6223;color:#20333a;font-size:72px;animation:countdown-pop .72s ease-out}@keyframes countdown-pop{0%{opacity:.3;transform:scale(.45)}55%{opacity:1;transform:scale(1.08)}100%{opacity:1;transform:scale(1)}}.modal-wrap{position:absolute;inset:0;background:#213c3d88;display:grid;place-items:center;padding:22px;z-index:5}.modal{max-width:420px;background:var(--cream);border:4px solid #587a79;border-radius:25px;padding:25px;box-shadow:0 8px 0 #496c70;text-align:center}.modal h2{margin:0 0 12px}.modal p{line-height:1.75;text-align:left}.settings-actions{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:20px}.settings-actions .button{width:100%;padding:10px 4px;font-size:15px}.leaderboard{padding-top:12px}.leaderboard h1{text-align:center;margin:8px 0 12px}.leaderboard-filters{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:10px}.leaderboard-filters .tool{padding:8px 3px}.leaderboard-filters .tool.on{border-color:#b58f2e;background:#ffd85a}.leaderboard-list{background:#f9f8e8;border:3px solid #587a79;border-radius:16px;overflow:auto;max-height:65dvh}.leaderboard-row{display:grid;grid-template-columns:40px 1fr auto;gap:8px;align-items:center;padding:11px 12px;border-bottom:1px solid #ccd6c9;font-weight:800}.leaderboard-row:last-child{border-bottom:0}.leaderboard-row small{display:block;font-weight:600;color:#587a79;margin-top:2px}.leaderboard-score{font-size:22px;color:#bd733d}.leaderboard-empty{text-align:center;padding:28px 14px;color:#587a79}.result{text-align:center;margin:auto 0}.result .duck{font-size:75px;margin:10px}.result h1{font-size:34px;margin:8px}.result .big{font-size:42px;font-weight:900;color:#bd733d}.actions{display:flex;justify-content:center;gap:10px;margin-top:25px}.hidden{display:none!important}
 </style></head>
 <body><main class="app">
 <section id="loading" class="screen"><div></div></section>
@@ -22,6 +22,7 @@
 <section id="game" class="screen"><div class="topbar"><div class="score">当前智力<br><strong id="roundScore">0</strong></div><div class="rank" id="gameRank">托儿所</div></div><div class="fuse"><i id="fuseFill"></i></div><div class="timer-label" id="timerLabel">自由模式</div><div class="game-score">拖动框选区域 · 区域总和：<span id="selectionSum">0</span></div><div class="board" id="board"></div><div class="toolbox"><button class="tool" id="shuffleBtn">🔀 洗牌</button><button class="tool" id="settingsBtn">⚙ 设置</button></div></section>
 <section id="result" class="screen result"><div class="duck">🐥</div><h1 id="resultTitle">本局结束！</h1><p>本局智力</p><div class="big" id="finalRound">0</div><p id="finalDuration">本局用时：0 秒</p><p>总智力：<b id="finalTotal">0</b><br>学历称号：<b id="finalRank">托儿所</b></p><p id="finalRecordStatus">本局数据正在保存…</p><button class="button secondary small-btn" id="resultLeaderboard">查看排行榜</button><div class="actions"><button class="button" id="againBtn">再来一局</button><button class="button secondary" id="homeBtn">返回首页</button></div></section>
 <div class="effects-layer" id="effectsLayer"></div>
+<div class="countdown-overlay hidden" id="countdownOverlay"><strong id="countdownNumber">3</strong></div>
 <div class="modal-wrap hidden" id="settingsModal"><div class="modal"><h2>设置</h2><p>可保存当前棋盘，或管理本局游戏。</p><div class="settings-actions"><button class="button secondary small-btn" id="settingsResume">继续游戏</button><button class="button secondary small-btn" id="settingsSave">保存进度</button><button class="button secondary small-btn" id="settingsPause">暂停计时</button><button class="button secondary small-btn" id="settingsRestart">重新开始</button><button class="button small-btn" id="settingsEnd">结束游戏</button><button class="button secondary small-btn" id="settingsHome">返回主页</button></div></div></div>
 <div class="modal-wrap hidden" id="rulesModal"><div class="modal"><h2>游戏说明</h2><p>拖动框选一个矩形区域，区域内所有未消除数字的总和正好等于 10，即可消除。</p><p>空位不会计入总和。可使用洗牌整理棋盘；倒计时模式在 60 秒后结束，计时模式会记录本局总用时。</p><button class="button" id="rulesClose">我知道了</button></div></div>
 </main><script>
@@ -31,7 +32,53 @@ const ROWS = 16, COLS = 10, ROUND_SECONDS = 60, GRID_GAP = 7;
 const MODE_LABELS = { default: '计时模式', countdown: '倒计时模式', stopwatch: '计时模式' };
 const clientId = localStorage.getItem('sum-ten-client-id') || crypto.randomUUID();
 localStorage.setItem('sum-ten-client-id', clientId);
-let grid = [], selected = [], selectionStart = null, selectionEnd = null, drag = false, round = 0, total = 0, time = ROUND_SECONDS, elapsed = 0, timer = null, mode = 'countdown', paused = false, gameEnded = false, lastRecordSync = Promise.resolve(false);
+let grid = [], selected = [], selectionStart = null, selectionEnd = null, drag = false, round = 0, total = 0, time = ROUND_SECONDS, elapsed = 0, timer = null, countdownTimer = null, mode = 'countdown', paused = false, gameEnded = false, gameReady = false, lastRecordSync = Promise.resolve(false), audioUnlockPromise = null;
+
+const backgroundMusic = new Audio('/audio/background.mp3');
+const openingSound = new Audio('/audio/start.mp3');
+const mergeSound = new Audio('/audio/merge.mp3');
+backgroundMusic.loop = true;
+backgroundMusic.preload = 'auto';
+openingSound.preload = 'auto';
+mergeSound.preload = 'auto';
+backgroundMusic.volume = .42;
+openingSound.volume = .9;
+mergeSound.volume = .8;
+
+function playSafely(audio) {
+  const result = audio.play();
+  return result && typeof result.catch === 'function' ? result : Promise.resolve();
+}
+function playBackgroundMusic() { return playSafely(backgroundMusic).catch(() => false); }
+function primeSound(audio) {
+  const muted = audio.muted;
+  audio.muted = true;
+  return playSafely(audio).then(() => {
+    audio.pause();
+    audio.currentTime = 0;
+    audio.muted = muted;
+  }).catch(() => { audio.muted = muted; });
+}
+function unlockAudio() {
+  if (!audioUnlockPromise) {
+    audioUnlockPromise = Promise.all([primeSound(openingSound), primeSound(mergeSound)]).then(() => true);
+  }
+  return audioUnlockPromise;
+}
+async function playOpeningSound() {
+  if (audioUnlockPromise) await audioUnlockPromise;
+  backgroundMusic.pause();
+  backgroundMusic.currentTime = 0;
+  openingSound.pause();
+  openingSound.currentTime = 0;
+  try { await playSafely(openingSound); } catch { void playBackgroundMusic(); }
+}
+function playMergeSound() {
+  mergeSound.pause();
+  mergeSound.currentTime = 0;
+  void playSafely(mergeSound).catch(() => {});
+}
+openingSound.addEventListener('ended', () => { void playBackgroundMusic(); });
 
 const rank = score => score < 100 ? '托儿所' : score < 300 ? '小学' : score < 600 ? '中学' : '大学';
 function show(id) { screens.forEach(screen => screen.classList.toggle('active', screen.id === id)); }
@@ -134,11 +181,54 @@ function finishSelection() {
   selected = [];
   updateSum();
   render();
-  if (effect) showTenEffect(effect);
+  if (effect) {
+    playMergeSound();
+    showTenEffect(effect);
+  }
 }
 
+function clearPrestart() {
+  clearInterval(countdownTimer);
+  countdownTimer = null;
+  gameReady = false;
+  $('#countdownOverlay').classList.add('hidden');
+}
+function startGameTimer() {
+  clearInterval(timer);
+  gameReady = true;
+  timer = setInterval(() => {
+    if (paused || !gameReady) return;
+    elapsed += 1;
+    if (mode === 'countdown') time -= 1;
+    updateTimer();
+    if (mode === 'countdown' && time <= 0) end('时间到！');
+  }, 1000);
+}
+function beginCountdown() {
+  let count = 3;
+  const overlay = $('#countdownOverlay');
+  const number = $('#countdownNumber');
+  overlay.classList.remove('hidden');
+  const showCount = () => {
+    number.textContent = count;
+    number.style.animation = 'none';
+    void number.offsetWidth;
+    number.style.animation = '';
+  };
+  showCount();
+  countdownTimer = setInterval(() => {
+    count -= 1;
+    if (count > 0) { showCount(); return; }
+    clearPrestart();
+    void playOpeningSound();
+    startGameTimer();
+  }, 1000);
+}
 function start(nextMode = 'countdown') {
   clearInterval(timer);
+  clearPrestart();
+  void unlockAudio();
+  backgroundMusic.pause();
   round = 0;
   time = ROUND_SECONDS;
   elapsed = 0;
@@ -156,13 +246,11 @@ function start(nextMode = 'countdown') {
   show('game');
   render();
   updateTimer();
-  timer = setInterval(() => {
-    if (paused) return;
-    elapsed += 1;
-    if (mode === 'countdown') time -= 1;
-    updateTimer();
-    if (mode === 'countdown' && time <= 0) end('时间到！');
-  }, 1000);
+  if (mode === 'countdown') beginCountdown();
+  else {
+    void playOpeningSound();
+    startGameTimer();
+  }
 }
 function pendingRecords() {
   try { return JSON.parse(localStorage.getItem('sum-ten-pending-records') || '[]'); } catch { return []; }
@@ -188,6 +276,7 @@ function end(title = '本局结束！') {
   if (gameEnded) return;
   gameEnded = true;
   clearInterval(timer);
+  clearPrestart();
   $('#resultTitle').textContent = title;
   $('#finalRound').textContent = round;
   $('#finalDuration').textContent = `${MODE_LABELS[mode]} · 本局用时：${elapsed} 秒`;
@@ -208,6 +297,7 @@ function saveGame() {
 }
 function goHome() {
   clearInterval(timer);
+  clearPrestart();
   drag = false;
   selected = [];
   selectionStart = null;
@@ -276,10 +366,16 @@ async function openLeaderboard(filter = 'all', locked = false) {
   }
 }
 window.addEventListener('pointerup', finishSelection);
+window.addEventListener('load', () => { void playBackgroundMusic(); });
+document.addEventListener('pointerdown', () => {
+  void unlockAudio();
+  if (!$('#game').classList.contains('active')) void playBackgroundMusic();
+}, { once: true });
 document.addEventListener('dblclick', event => event.preventDefault(), { passive: false });
 document.addEventListener('gesturestart', event => event.preventDefault(), { passive: false });
 const board = $('#board');
 board.addEventListener('pointerdown', event => {
+  if (!gameReady) return;
   const position = boardPositionFromPoint(event.clientX, event.clientY);
   if (!position) return;
   event.preventDefault();
@@ -299,13 +395,13 @@ board.addEventListener('pointermove', event => {
 }, { passive: false });
 board.addEventListener('contextmenu', event => event.preventDefault());
 $('#againBtn').addEventListener('click', () => start(mode));
-$('#homeBtn').addEventListener('click', () => show('home'));
+$('#homeBtn').addEventListener('click', goHome);
 $('#countdownBtn').addEventListener('click', () => start('countdown'));
 $('#stopwatchBtn').addEventListener('click', () => start('stopwatch'));
 $('#rulesBtn').addEventListener('click', () => $('#rulesModal').classList.remove('hidden'));
 $('#rulesClose').addEventListener('click', () => $('#rulesModal').classList.add('hidden'));
 $('#leaderboardBtn').addEventListener('click', () => { void openLeaderboard('all', false); });
-$('#leaderboardHome').addEventListener('click', () => show('home'));
+$('#leaderboardHome').addEventListener('click', goHome);
 $('#resultLeaderboard').addEventListener('click', () => { void openLeaderboard(mode, true); });
 document.querySelectorAll('#leaderboardFilters [data-mode]').forEach(button => {
   button.addEventListener('click', () => { void openLeaderboard(button.dataset.mode, false); });
@@ -335,6 +431,7 @@ $('#loadBtn').addEventListener('click', () => {
     const data = JSON.parse(saved);
     if (!Array.isArray(data.grid) || data.grid.length !== ROWS) throw new Error('invalid');
     clearInterval(timer);
+    clearPrestart();
     ({ grid, round, total, time, elapsed = 0, mode = 'stopwatch' } = data);
     mode = mode === 'countdown' ? 'countdown' : 'stopwatch';
     paused = false;
@@ -345,7 +442,8 @@ $('#loadBtn').addEventListener('click', () => {
     $('#gameRank').textContent = rank(total);
     show('game'); render(); updateSum(); updateTimer();
     gameEnded = false;
-    timer = setInterval(() => { if (paused) return; elapsed += 1; if (mode === 'countdown') time -= 1; updateTimer(); if (mode === 'countdown' && time <= 0) end('时间到！'); }, 1000);
+    void unlockAudio();
+    startGameTimer();
   } catch { alert('进度数据无法读取。'); }
 });
 window.addEventListener('online', () => { void flushRecords(); });

@@ -13,7 +13,8 @@
 - 空牌、绿色空洞和牌间间隙都可以作为拖动起点或经过区域
 - 选择区域内所有未消除数字计算总和，等于 10 即消除
 - 成功消除后显示“10”合成动画
-- 倒计时模式（默认）：60 秒结束
+- 背景音乐循环播放，开局与合成 10 使用独立音效
+- 倒计时模式（默认）：先显示 3、2、1，预备阶段不计时，随后开始 60 秒对局
 - 计时模式：记录本局累计用时，手动结束游戏
 - 洗牌、暂停、重新开始、结束游戏
 - 设置中保存/读取当前进度和返回主页
@@ -60,6 +61,7 @@ GET  /api/leaderboard?mode=stopwatch
 
 ```text
 public/index.html              游戏页面和前端逻辑
+public/audio/                  背景音乐、开局音效和合并音效
 public/sw.js                   离线缓存 Service Worker
 public/manifest.webmanifest    PWA 配置
 src/index.js                   Cloudflare Worker 和 API
