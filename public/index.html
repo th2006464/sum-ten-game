@@ -32,7 +32,7 @@ const ROWS = 16, COLS = 10, ROUND_SECONDS = 60, GRID_GAP = 7;
 const MODE_LABELS = { default: '计时模式', countdown: '倒计时模式', stopwatch: '计时模式' };
 const clientId = localStorage.getItem('sum-ten-client-id') || crypto.randomUUID();
 localStorage.setItem('sum-ten-client-id', clientId);
-let grid = [], selected = [], selectionStart = null, selectionEnd = null, drag = false, round = 0, total = 0, time = ROUND_SECONDS, elapsed = 0, timer = null, countdownTimer = null, mode = 'countdown', paused = false, gameEnded = false, gameReady = false, lastRecordSync = Promise.resolve(false), audioUnlockPromise = null;
+let grid = [], selected = [], selectionStart = null, selectionEnd = null, drag = false, round = 0, total = 0, time = ROUND_SECONDS, elapsed = 0, timer = null, countdownTimer = null, mode = 'countdown', paused = false, gameEnded = false, gameReady = false, openingPlayed = false, lastRecordSync = Promise.resolve(false), audioUnlockPromise = null;
 
 const backgroundMusic = new Audio('/audio/background.mp3');
 const openingSound = new Audio('/audio/start.mp3');
@@ -68,9 +68,10 @@ function unlockAudio() {
   return audioUnlockPromise;
 }
 async function playOpeningSound() {
+  if (openingPlayed) return;
+  openingPlayed = true;
   if (audioUnlockPromise) await audioUnlockPromise;
   backgroundMusic.pause();
-  backgroundMusic.currentTime = 0;
   openingSound.pause();
   openingSound.currentTime = 0;
   try { await playSafely(openingSound); } catch { void playBackgroundMusic(); }
@@ -237,6 +238,7 @@ function start(nextMode = 'countdown') {
   mode = nextMode;
   paused = false;
   gameEnded = false;
+  openingPlayed = false;
   $('#settingsPause').textContent = '暂停计时';
   selected = [];
   selectionStart = null;
