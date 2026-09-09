@@ -61,7 +61,9 @@ function primeSound(audio) {
 }
 function unlockAudio() {
   if (!audioUnlockPromise) {
-    audioUnlockPromise = Promise.all([primeSound(openingSound), primeSound(mergeSound)]).then(() => true);
+    // Do not start or prime the opening sound here: countdown mode must stay
+    // completely silent until 3, 2, 1 has finished.
+    audioUnlockPromise = primeSound(mergeSound).then(() => true);
   }
   return audioUnlockPromise;
 }
