@@ -23,7 +23,8 @@
 <section id="result" class="screen result"><div class="duck">🐥</div><h1 id="resultTitle">本局结束！</h1><p>本局智力</p><div class="big" id="finalRound">0</div><p id="finalDuration">本局用时：0 秒</p><p>总智力：<b id="finalTotal">0</b><br>学历称号：<b id="finalRank">托儿所</b></p><p id="finalRecordStatus">本局数据正在保存…</p><button class="button secondary small-btn" id="resultLeaderboard">查看排行榜</button><div class="actions"><button class="button" id="againBtn">再来一局</button><button class="button secondary" id="homeBtn">返回首页</button></div></section>
 <div class="effects-layer" id="effectsLayer"></div>
 <div class="countdown-overlay hidden" id="countdownOverlay"><strong id="countdownNumber">3</strong></div>
-<div class="modal-wrap hidden" id="settingsModal"><div class="modal"><h2>设置</h2><p>可保存当前棋盘，或管理本局游戏。</p><div class="settings-actions"><button class="button secondary small-btn" id="settingsResume">继续游戏</button><button class="button secondary small-btn" id="settingsSave">保存进度</button><button class="button secondary small-btn" id="settingsPause">暂停计时</button><button class="button secondary small-btn" id="settingsRestart">重新开始</button><button class="button small-btn" id="settingsEnd">结束游戏</button><button class="button secondary small-btn" id="settingsHome">返回主页</button></div></div></div>
+<div class="modal-wrap hidden" id="settingsModal"><div class="modal"><h2>设置</h2><p>可保存当前棋盘，或管理本局游戏。</p><div class="settings-actions"><button class="button secondary small-btn" id="settingsResume">继续游戏</button><button class="button secondary small-btn" id="settingsSave">保存进度</button><button class="button secondary small-btn" id="settingsPause">暂停计时</button><button class="button secondary small-btn" id="settingsOffline">⬇ 下载离线版</button><button class="button secondary small-btn" id="settingsRestart">重新开始</button><button class="button small-btn" id="settingsEnd">结束游戏</button><button class="button secondary small-btn" id="settingsHome">返回主页</button></div></div></div>
+<div class="modal-wrap hidden" id="offlineModal"><div class="modal"><h2 id="offlineTitle">准备离线模式</h2><p id="offlineText">正在下载游戏资源…</p><button class="button hidden" id="offlineClose">完成</button></div></div>
 <div class="modal-wrap hidden" id="rulesModal"><div class="modal"><h2>游戏说明</h2><p>拖动框选一个矩形区域，区域内所有未消除数字的总和正好等于 10，即可消除。</p><p>空位不会计入总和。可使用洗牌整理棋盘；倒计时模式在 60 秒后结束，计时模式会记录本局总用时。</p><button class="button" id="rulesClose">我知道了</button></div></div>
 </main><script>
 const $ = s => document.querySelector(s);
@@ -299,6 +300,58 @@ function saveGame() {
   $('#settingsSave').textContent = '✓ 已保存';
   setTimeout(() => { $('#settingsSave').textContent = '保存进度'; }, 1200);
 }
+async function offlineWorker() {
+  const registration = await navigator.serviceWorker.register('/sw.js');
+  return (await navigator.serviceWorker.ready).active || registration.active;
+}
+async function offlineCommand(type, onProgress) {
+  const worker = await offlineWorker();
+  if (!worker) throw new Error('离线服务尚未启动');
+  return new Promise((resolve, reject) => {
+    const channel = new MessageChannel();
+    const timeout = setTimeout(() => reject(new Error('下载等待超时，请重试')), 30000);
+    channel.port1.onmessage = event => {
+      const data = event.data || {};
+      if (data.type === 'progress') { onProgress?.(data); return; }
+      if (data.type === 'error') { clearTimeout(timeout); reject(new Error(data.message)); return; }
+      if (data.type === 'complete' || data.type === 'status') { clearTimeout(timeout); resolve(data); }
+    };
+    worker.postMessage({ type }, [channel.port2]);
+  });
+}
+async function downloadOffline() {
+  const button = $('#settingsOffline');
+  button.disabled = true;
+  $('#settingsModal').classList.add('hidden');
+  $('#offlineModal').classList.remove('hidden');
+  $('#offlineClose').classList.add('hidden');
+  $('#offlineTitle').textContent = '准备离线模式';
+  $('#offlineText').textContent = '正在下载游戏资源…';
+  try {
+    await offlineCommand('DOWNLOAD_OFFLINE', ({ current, total }) => { $('#offlineText').textContent = `正在下载 ${current}/${total}…`; });
+    localStorage.setItem('sum-ten-offline-ready', '1');
+    $('#offlineTitle').textContent = '离线版已准备完成';
+    $('#offlineText').textContent = '现在可以完全退出游戏，开启飞行模式后从主屏幕图标进入。';
+    button.textContent = '✓ 离线版已下载';
+  } catch (error) {
+    $('#offlineTitle').textContent = '下载未完成';
+    $('#offlineText').textContent = error.message || '请保持联网后重试。';
+    button.textContent = '⬇ 重新下载离线版';
+  } finally {
+    button.disabled = false;
+    $('#offlineClose').classList.remove('hidden');
+  }
+}
+async function refreshOfflineStatus() {
+  if (!('serviceWorker' in navigator)) return;
+  try {
+    const result = await offlineCommand('CHECK_OFFLINE');
+    if (result.ready) {
+      localStorage.setItem('sum-ten-offline-ready', '1');
+      $('#settingsOffline').textContent = '✓ 离线版已下载';
+    }
+  } catch { /* The download button remains available. */ }
+}
 function goHome() {
   clearInterval(timer);
   clearPrestart();
@@ -425,6 +478,8 @@ $('#settingsPause').addEventListener('click', () => {
 $('#settingsBtn').addEventListener('click', () => $('#settingsModal').classList.remove('hidden'));
 $('#settingsResume').addEventListener('click', () => $('#settingsModal').classList.add('hidden'));
 $('#settingsSave').addEventListener('click', saveGame);
+$('#settingsOffline').addEventListener('click', () => { void downloadOffline(); });
+$('#offlineClose').addEventListener('click', () => $('#offlineModal').classList.add('hidden'));
 $('#settingsHome').addEventListener('click', () => { $('#settingsModal').classList.add('hidden'); goHome(); });
 $('#settingsRestart').addEventListener('click', () => { $('#settingsModal').classList.add('hidden'); start(mode); });
 $('#settingsEnd').addEventListener('click', () => { $('#settingsModal').classList.add('hidden'); end('游戏已结束！'); });
@@ -451,7 +506,7 @@ $('#loadBtn').addEventListener('click', () => {
   } catch { alert('进度数据无法读取。'); }
 });
 window.addEventListener('online', () => { void flushRecords(); });
-if ('serviceWorker' in navigator) window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').catch(() => {}); });
+if ('serviceWorker' in navigator) window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').then(() => refreshOfflineStatus()).catch(() => {}); });
 void flushRecords();
 $('#homeRank').textContent = rank(total);
 </script></body></html>
