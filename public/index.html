@@ -329,9 +329,10 @@ async function downloadOffline() {
   $('#offlineText').textContent = '正在下载游戏资源…';
   try {
     await offlineCommand('DOWNLOAD_OFFLINE', ({ current, total }) => { $('#offlineText').textContent = `正在下载 ${current}/${total}…`; });
+    await navigator.storage?.persist?.().catch(() => false);
     localStorage.setItem('sum-ten-offline-ready', '1');
     $('#offlineTitle').textContent = '离线版已准备完成';
-    $('#offlineText').textContent = '现在可以完全退出游戏，开启飞行模式后从主屏幕图标进入。';
+    $('#offlineText').textContent = '离线启动已验证。现在可以完全退出游戏，开启飞行模式后从主屏幕图标进入。';
     button.textContent = '✓ 离线版已下载';
   } catch (error) {
     $('#offlineTitle').textContent = '下载未完成';

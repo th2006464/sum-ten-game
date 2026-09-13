@@ -1,5 +1,5 @@
-const CACHE_NAME = 'sum-ten-shell-v3';
-const CORE_SHELL = ['/', '/index.html', '/manifest.webmanifest'];
+const CACHE_NAME = 'sum-ten-shell-v4';
+const CORE_SHELL = ['/', '/manifest.webmanifest'];
 const OFFLINE_ASSETS = [
   ...CORE_SHELL, '/audio/background.mp3', '/audio/start.mp3', '/audio/merge.mp3',
 ];
@@ -48,11 +48,14 @@ self.addEventListener('fetch', event => {
   const request = event.request;
   const url = new URL(request.url);
   if (request.method !== 'GET' || url.origin !== self.location.origin || url.pathname.startsWith('/api/')) return;
-  event.respondWith(caches.match(request).then(cached => cached || fetch(request).then(async response => {
+  event.respondWith(caches.open(CACHE_NAME).then(async cache => {
+    const cached = (await cache.match(request)) || (request.mode === 'navigate' ? await cache.match('/') : null);
+    if (cached) return cached;
+    return fetch(request).then(async response => {
     if (response.ok) {
-      const cache = await caches.open(CACHE_NAME);
       await cache.put(request, response.clone());
     }
     return response;
-  }).catch(() => request.mode === 'navigate' ? caches.match('/index.html') : Response.error())));
+    }).catch(() => Response.error());
+  }));
 });
