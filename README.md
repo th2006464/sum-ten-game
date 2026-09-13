@@ -23,6 +23,20 @@
 - PWA 离线缓存：断网后仍可打开和游玩
 - 离线对局记录保存在本地，恢复网络后自动同步
 
+## 离线游玩与安装
+
+项目采用 PWA 与 Service Worker 缓存。游戏首页使用缓存优先策略，飞行模式冷启动不会先等待网络；页面、配置和三段游戏音频可以在设置中手动完整下载。
+
+iPhone / iPad 使用方法：
+
+1. 使用 Safari 打开游戏并添加到主屏幕。
+2. 保持联网，从主屏幕图标打开游戏并进入任意模式。
+3. 打开“设置”，点击“下载离线版”。
+4. 等待出现“离线版已准备完成”和“离线启动已验证”。
+5. 此后可以完全退出游戏，开启飞行模式，再从主屏幕图标冷启动。
+
+离线时可以正常开局、计时、消除、保存及读取本机进度。对局记录先保存在本机，恢复网络后自动同步到 D1；排行榜需要联网读取。每次发布新版时会更换缓存版本并自动更新。如果 iOS 因长期未使用或存储空间紧张而清理网站数据，需要联网重新下载一次离线版。
+
 ## 运行方式
 
 需要 Node.js 和 Wrangler：
@@ -38,7 +52,7 @@ npx wrangler dev
 项目使用 Cloudflare Workers 托管静态页面和 API，D1 保存对局数据：
 
 ```bash
-npx wrangler d1 migrations apply sum-ten-game-data --remote
+npx wrangler d1 migrations apply game-data --remote
 npx wrangler deploy
 ```
 
