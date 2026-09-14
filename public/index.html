@@ -28,12 +28,20 @@
 <div class="modal-wrap hidden" id="rulesModal"><div class="modal"><h2>游戏说明</h2><p>拖动框选一个矩形区域，区域内所有未消除数字的总和正好等于 10，即可消除。</p><p>空位不会计入总和。可使用洗牌整理棋盘；倒计时模式在 60 秒后结束，计时模式会记录本局总用时。</p><button class="button" id="rulesClose">我知道了</button></div></div>
 </main><script>
 const $ = s => document.querySelector(s);
+const leaderboardClose = document.createElement('button');
+leaderboardClose.type = 'button';
+leaderboardClose.id = 'leaderboardClose';
+leaderboardClose.setAttribute('aria-label', '关闭排行榜');
+leaderboardClose.textContent = '×';
+leaderboardClose.style.cssText = 'position:absolute;top:7px;right:2px;width:38px;height:38px;border:2px solid #587a79;border-radius:50%;background:#fffbea;color:#355b5e;font-size:26px;line-height:1;font-weight:900';
+document.querySelector('#leaderboard').style.position = 'relative';
+document.querySelector('#leaderboard').prepend(leaderboardClose);
 const screens = [...document.querySelectorAll('.screen')];
 const ROWS = 16, COLS = 10, ROUND_SECONDS = 60, GRID_GAP = 7;
 const MODE_LABELS = { default: '计时模式', countdown: '倒计时模式', stopwatch: '计时模式' };
 const clientId = localStorage.getItem('sum-ten-client-id') || crypto.randomUUID();
 localStorage.setItem('sum-ten-client-id', clientId);
-let grid = [], selected = [], selectionStart = null, selectionEnd = null, drag = false, round = 0, total = 0, time = ROUND_SECONDS, elapsed = 0, timer = null, countdownTimer = null, mode = 'countdown', paused = false, gameEnded = false, gameReady = false, openingPlayed = false, lastRecordSync = Promise.resolve(false), audioUnlockPromise = null;
+let grid = [], selected = [], selectionStart = null, selectionEnd = null, drag = false, round = 0, total = 0, time = ROUND_SECONDS, elapsed = 0, timer = null, countdownTimer = null, mode = 'countdown', paused = false, gameEnded = false, gameReady = false, openingPlayed = false, lastRecordSync = Promise.resolve(false), audioUnlockPromise = null, leaderboardReturnScreen = 'home';
 
 const backgroundMusic = new Audio('/audio/background.mp3');
 const openingSound = new Audio('/audio/start.mp3');
@@ -383,6 +391,8 @@ function formatBeijingTime(value) {
   return `${valueFor('year')}年${valueFor('month')}月${valueFor('day')}日 ${valueFor('hour')}:${valueFor('minute')}`;
 }
 async function openLeaderboard(filter = 'all', locked = false) {
+  const activeScreen = screens.find(screen => screen.classList.contains('active'));
+  if (activeScreen?.id && activeScreen.id !== 'leaderboard') leaderboardReturnScreen = activeScreen.id;
   show('leaderboard');
   const list = $('#leaderboardList');
   $('#leaderboardFilters').classList.toggle('hidden', locked);
@@ -460,6 +470,7 @@ $('#rulesBtn').addEventListener('click', () => $('#rulesModal').classList.remove
 $('#rulesClose').addEventListener('click', () => $('#rulesModal').classList.add('hidden'));
 $('#leaderboardBtn').addEventListener('click', () => { void openLeaderboard('all', false); });
 $('#leaderboardHome').addEventListener('click', goHome);
+$('#leaderboardClose').addEventListener('click', () => show(leaderboardReturnScreen));
 $('#resultLeaderboard').addEventListener('click', () => { void openLeaderboard(mode, true); });
 document.querySelectorAll('#leaderboardFilters [data-mode]').forEach(button => {
   button.addEventListener('click', () => { void openLeaderboard(button.dataset.mode, false); });
