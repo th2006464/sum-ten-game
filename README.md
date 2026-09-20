@@ -2,6 +2,8 @@
 
 一个轻量的移动端数字消除小游戏。玩家拖动框选一个矩形区域，区域内数字总和正好为 10 时即可消除。
 
+如果要让其他 AI 继续维护、扩展或部署本项目，请先阅读 [AI 维护与扩展手册](AI_MAINTAINER_GUIDE.md)。手册记录了状态机、触摸选区、UI 约束、音频、离线缓存、D1 API 和发布检查清单。
+
 ## 在线体验
 
 - 游戏地址：[sum-ten-game.game.foxtang.com](https://sum-ten-game.game.foxtang.com)
@@ -81,6 +83,7 @@ public/manifest.webmanifest    PWA 配置
 src/index.js                   Cloudflare Worker 和 API
 migrations/                    D1 数据库迁移
 wrangler.jsonc                 Worker、静态资源和 D1 配置
+AI_MAINTAINER_GUIDE.md         面向 AI 的详细维护、扩展和部署规范
 ```
 
 ## 数据说明
